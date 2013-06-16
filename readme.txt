@@ -12,6 +12,15 @@ This plugin creates the goods menu of your store using shortcode. The menu is lo
 
 == Description ==
 
+Shop Menuは、商品/メニュー一覧を表示するプラグインです。任意の固定ページや投稿に商品/メニュー一覧を表示することができます。
+商品/メニュー一覧には、商品のアイキャッチ画像、商品名、商品価格が自動的に表示されます。
+
+= 特徴 =
+* 商品/メニュー一覧で商品価格の表示・非表示を設定できます
+* 一度に表示する商品/メニューの件数を設定できます
+* Ajaxを使って商品/メニュー一覧を表示することで、一覧性と高速な表示を両立しています
+
+詳細な使用方法はこちらです: http://residentbird.main.jp/bizplugin/plugins/shopmenu/
 
 == Installation ==
 
@@ -23,4 +32,5 @@ This plugin creates the goods menu of your store using shortcode. The menu is lo
 
 == Changelog ==
 
-
+= 1.0.0 =
+* 初版リリース
