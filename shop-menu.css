@@ -3,28 +3,30 @@
 #shop-menu {
 	margin: 10px 0;
 	width: 100%;
-	overflow: auto;
 }
 
-.shop-menu-item {
+#shop-menu-list {
+	overflow: hidden;
+}
+
+div.shop-menu-item {
 	float: left;
 	border: solid 1px #eee;
 	background-color: #fff;
 	width: 139px;
-	margin: 5px;
-	margin-left: 0px;
+	margin: 10px 3px;
 	vertical-align: top;
 	-webkit-box-shadow: 0 10px 6px -6px #777;
 	-moz-box-shadow: 0 10px 6px -6px #777;
 	box-shadow: 0 10px 6px -6px #777;
 }
 
-.shop-menu-item img {
+div.shop-menu-item img {
 	border: 1px Silver solid;
 	margin: 6px;
 }
 
-.shop-menu-name,.shop-menu-price {
+div.shop-menu-name, div.shop-menu-price {
 	display: block;
 	font-size: 1em;
 	height: 2.8em;
@@ -49,19 +51,23 @@
 }
 
 #next-menu-btn {
-	clear:both;
-	background-color: #454545;
-	background-image: linear-gradient(to bottom, #383838 0px, #151515 100%);
-	border-color: #151515 #151515 #000000;
-	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
-	outline: 0 none;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
-	margin: 0 auto;
-	margin-top: 15px;
+	background-color: #428BCA;
+	background-image: none;
+	color: #FFFFFF;
+	border-color: #357EBD;
+	margin: 30px auto;
 	vertical-align: middle;
 	text-align: center;
 	cursor: pointer;
-	color: #FFF;
-	width: 100px;
+	width: 120px;
 	padding: 8px 0;
+	border-radius:5px;
+	-webkit-border-radius: 5px;    /* Safari,Google Chrome */
+	-moz-border-radius: 5px;   /* Firefox */
+}
+
+#next-menu-btn:hover, next-menu-btn:focus {
+	background-color: #3276B1;
+	border-color: #285E8E;
+	color: #FFFFFF;
 }

@@ -1,6 +1,8 @@
 <div id='shop-menu'>
-	<?php include( dirname(__FILE__) . '/menu-list.php' ); ?>
+	<div id='shop-menu-list'>
+		<?php include( dirname(__FILE__) . '/menu-list.php' ); ?>
+	</div>
 	<?php if ( $info->has_next ): ?>
-	<p id='next-menu-btn'>続きを見る</p>
+	<div id='next-menu-btn'>続きを見る</div>
 	<?php endif; ?>
 </div>

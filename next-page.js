@@ -20,10 +20,10 @@ jQuery(document).ready(function($) {
 			success : function(data) {
 				sending = false;
 				SM_Setting.next_page = data.next_page;
-				var next_tag = $('#next-menu-btn');
-				next_tag.before(data.html);
+				$('.shop-menu-item:last').after(data.html);
+				$('.shop-menu-item:hidden').fadeIn("slow");
 				if (data.next_page == null) {
-					next_tag.remove();
+					$('#next-menu-btn').remove();
 				}
 			}
 		});
