@@ -3,7 +3,7 @@
  Plugin Name: Shop Menu
 Plugin URI: http://residentbird.main.jp/bizplugin/
 Description: 商品一覧、メニュー一覧を作成するプラグインです
-Version: 1.0.1
+Version: 1.1.0
 Author:WordPress Biz Plugin
 Author URI: http://residentbird.main.jp/bizplugin/
 */
@@ -16,6 +16,7 @@ new ShopMenu();
 
 
 class SM{
+	const VERSION = "1.1.0";
 	const SHORTCODE = "showshopmenu";
 	const SHORTCODE_PRICE = "showprice";
 	const OPTIONS = "shop_memu_options";
@@ -32,8 +33,8 @@ class SM{
 	}
 
 	public static function enqueue_css_js(){
-		wp_enqueue_style('shop-menu-style', plugins_url('shop-menu.css', __FILE__ ));
-		wp_enqueue_script('shop-menu-js', plugins_url('next-page.js', __FILE__ ), array('jquery'));
+		wp_enqueue_style('shop-menu-style', plugins_url('shop-menu.css', __FILE__ ), array(), self::VERSION);
+		wp_enqueue_script('shop-menu-js', plugins_url('next-page.js', __FILE__ ), array('jquery'), self::VERSION);
 	}
 
 	public static function localize_js(){
@@ -61,9 +62,14 @@ class ShopMenu{
 		add_action( 'init', array(&$this,'on_init') );
 		add_action( 'admin_init', array(&$this,'on_admin_init') );
 		add_action( 'admin_menu', array(&$this, 'on_admin_menu'));
+		add_action( 'after_setup_theme',  array(&$this, 'after_setup_theme'));
 		add_action( 'wp_enqueue_scripts', array(&$this,'on_enqueue_sctipts') );
 		add_action( 'wp_ajax_get_menu_ajax', array(&$this,'get_menu_ajax') );
 		add_action( 'wp_ajax_nopriv_get_menu_ajax', array(&$this,'get_menu_ajax') );
+		add_filter( 'manage_edit-shop_menu_columns', array(&$this, 'manage_posts_columns'));
+		add_action( 'manage_shop_menu_posts_custom_column',  array(&$this, 'add_shop_category_column'), 10, 2);
+		add_filter( 'manage_edit-menu_type_columns', array(&$this, 'manage_menu_type_columns'));
+		add_action( 'manage_menu_type_custom_column',  array(&$this, 'add_shortcode_column'), 10, 3);
 		add_shortcode( SM::SHORTCODE, array(&$this,'show_shortcode'));
 		add_shortcode( SM::SHORTCODE_PRICE, array(&$this,'show_price'));
 	}
@@ -118,12 +124,13 @@ class ShopMenu{
 
 	function register_shop_menu(){
 		$labels = array(
-				'name' => 'ShopMenu',
-				'singular_name' => 'ShopMenu',
-				'add_new_item' => '新規Menuを追加',
-				'edit_item' => 'Menuを編集',
+				'menu_name' => 'ShopMenu',
+				'all_items' => '商品一覧',
+				'name' => '商品一覧',
+				'add_new_item' => '商品を追加',
+				'edit_item' => '商品を編集',
 		);
-		$supports = array('title', 'editor', 'thumbnail', 'revisions', 'page-attributes');
+		$supports = array('title', 'editor', 'thumbnail', 'revisions', 'page-attributes', 'slug');
 		$menu_setting = array(
 				'labels' => $labels,
 				'public' => true,
@@ -138,6 +145,42 @@ class ShopMenu{
 				'has_archive' => true,
 		);
 		register_post_type( 'shop_menu', $menu_setting);
+		$category = array(
+				'label' => '商品カテゴリ',
+				'public' => true,
+				'show_ui' => true,
+				'hierarchical' => true,
+		);
+		register_taxonomy( 'menu_type', 'shop_menu', $category);
+
+	}
+	function manage_posts_columns($columns) {
+		$columns['shop_category'] = "商品カテゴリー";
+		unset( $columns['date'] );
+		$columns['date']  = '日時';
+		return $columns;
+	}
+
+	function manage_menu_type_columns($columns) {
+		$columns['menu_shortcode'] = "ショートコード";
+		unset( $columns['description'] );
+		return $columns;
+	}
+
+	function add_shop_category_column($column_name, $post_id){
+		if( $column_name == 'shop_category' ){
+			$category = get_the_term_list($post_id, 'menu_type');
+		}
+		if ( isset($category) && $category ){
+			echo $category;
+		}else{
+			echo __('None');
+		}
+	}
+
+	function add_shortcode_column( $out, $column_name, $theme_id ){
+		$short = SM::SHORTCODE;
+		echo "<input type='text' value='[${short} id=${theme_id}]' size='18' readonly>";
 	}
 
 	function on_enqueue_sctipts() {
@@ -153,14 +196,22 @@ class ShopMenu{
 	}
 
 	public function on_admin_menu() {
-		add_submenu_page( "edit.php?post_type=shop_menu", "ShopMene設定", "ShopMene設定", 'administrator', __FILE__, array(&$this->adminUi, 'show_admin_page'));
+		add_submenu_page( "edit.php?post_type=shop_menu", "ShopMenu設定", "設定", 'administrator', __FILE__, array(&$this->adminUi, 'show_admin_page'));
+	}
+
+	public function after_setup_theme() {
+		add_theme_support( 'post-thumbnails', array('shop_menu'));
 	}
 
 	/**
 	 * shortcode
 	 */
-	function show_shortcode(){
-		$info = new ShopMenuInfo( array(&$this, 'get_post_meta'));
+	function show_shortcode( $atts ){
+		extract(shortcode_atts(array(
+				'id' => null,
+		), $atts));
+		$info = new ShopMenuInfo( array(&$this, 'get_post_meta'), 0, $id);
+		$category = $id;
 		ob_start();
 		include( dirname(__FILE__) . '/shop-menu-view.php');
 		$contents = ob_get_contents();
@@ -186,18 +237,11 @@ class ShopMenu{
 		if ( $page == 0){
 			die();
 		}
-		$info = new ShopMenuInfo( array(&$this, 'get_post_meta'), $page );
-		$info->isHidden = true;
-
-		ob_start();
-		include( dirname(__FILE__) . '/menu-list.php');
-		$content = ob_get_contents();
-		ob_end_clean();
-
+		$category_id = absint( $_REQUEST['category'] );
+		$info = new ShopMenuInfo( array(&$this, 'get_post_meta'), $page, $category_id );
 		$charset = get_bloginfo( 'charset' );
-		$next = $info->has_next ? $page + 1: null;
-		$array = array( 'html' => $content, 'next_page' => $next );
-		$json = json_encode( $array );
+		$info->next_page = $info->has_next ? $page + 1: null;
+		$json = json_encode( $info );
 		nocache_headers();
 		header( "Content-Type: application/json; charset=$charset" );
 		echo $json;
@@ -210,9 +254,8 @@ class ShopMenuInfo{
 	var $items = array();
 	var $has_next = false;
 	var $show_price = true;
-	var $isHidden = false;
 
-	public function __construct( $callback, $page = 0){
+	public function __construct( $callback, $page = 0, $category_id = null){
 		$options = SM::get_option();
 		$this->show_price = $options['sm_show_price'];
 		$item_num = $options['sm_item_num'];
@@ -223,6 +266,12 @@ class ShopMenuInfo{
 		$condition['order'] = 'desc';
 		$condition['numberposts'] = $item_num + 1;
 		$condition['offset'] = $page * $item_num;
+		if ( isset($category_id) ){
+			$terms = get_term_by( 'id', $category_id, 'menu_type');
+			if ( $terms ){
+				$condition['menu_type'] = $terms->slug;
+			}
+		}
 
 		$posts = get_posts( $condition );
 		if ( !is_array($posts) ){
