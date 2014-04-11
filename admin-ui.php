@@ -14,6 +14,7 @@ class SMAdminUi {
 		add_settings_field('sm_show_price', '価格を表示する', array(&$this,'setting_show_price'), $this->file_path, 'SM_main_section');
 		add_settings_field('sm_monetary_unit', '値段の単位', array(&$this,'setting_monetary_unit'), $this->file_path, 'SM_main_section');
 		add_settings_field('sm_item_num', '表示件数', array(&$this,'setting_item_num'), $this->file_path, 'SM_main_section');
+		add_settings_field('sm_window_open', '商品ページを別ウィンドウで開く', array(&$this,'setting_window_open'), $this->file_path, 'SM_main_section');
 	}
 
 	public function show_admin_page() {
@@ -27,6 +28,7 @@ class SMAdminUi {
 		$output['sm_monetary_unit'] = empty( $input['sm_monetary_unit'] ) ? "円（税込）" :  esc_html( $input['sm_monetary_unit'] );
 		$output['sm_show_price'] = $input['sm_show_price'];
 		$output['sm_item_num'] = $input['sm_item_num'];
+		$output['sm_window_open'] = $input['sm_window_open'];
 		if ( !is_numeric( $input['sm_item_num']) || $input['sm_item_num'] < 0 || $output['sm_item_num'] > 30){
 			$output['sm_item_num'] = 12;
 		}
@@ -63,4 +65,10 @@ class SMAdminUi {
 		echo "<input id='sm_item_num' name='{$option_name}[sm_item_num]' size='2' type='text' value='{$value}' />";
 	}
 
+	function setting_window_open() {
+		$options = SM::get_option();
+		$option_name = SM::OPTIONS;
+		$checked = (isset($options['sm_window_open']) && $options['sm_window_open']) ? $checked = ' checked="checked" ': "";
+		echo "<input id='sm_window_open' name='{$option_name}[sm_window_open]' type='checkbox' {$checked} />";
+	}
 }

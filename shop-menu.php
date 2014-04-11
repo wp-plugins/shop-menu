@@ -3,7 +3,7 @@
  Plugin Name: Shop Menu
 Plugin URI: http://residentbird.main.jp/bizplugin/
 Description: 商品一覧、メニュー一覧を作成するプラグインです
-Version: 1.1.0
+Version: 1.2.0
 Author:WordPress Biz Plugin
 Author URI: http://residentbird.main.jp/bizplugin/
 */
@@ -16,7 +16,7 @@ new ShopMenu();
 
 
 class SM{
-	const VERSION = "1.1.0";
+	const VERSION = "1.2.0";
 	const SHORTCODE = "showshopmenu";
 	const SHORTCODE_PRICE = "showprice";
 	const OPTIONS = "shop_memu_options";
@@ -254,10 +254,12 @@ class ShopMenuInfo{
 	var $items = array();
 	var $has_next = false;
 	var $show_price = true;
+	var $window_open = false;
 
 	public function __construct( $callback, $page = 0, $category_id = null){
 		$options = SM::get_option();
 		$this->show_price = $options['sm_show_price'];
+		$this->window_open = isset( $options['sm_window_open'] ) ? $options['sm_window_open'] : false;
 		$item_num = $options['sm_item_num'];
 
 		$condition = array();
@@ -307,7 +309,7 @@ class ShopMenuItem{
 	}
 
 	private function get_thumbnail($id){
-		$img_tag = get_the_post_thumbnail( $id, array(125,125) );
+		$img_tag = get_the_post_thumbnail( $id, 'thumbnail' );
 		if ( !empty($img_tag) ){
 			return $img_tag;
 		}

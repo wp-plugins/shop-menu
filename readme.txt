@@ -4,7 +4,7 @@ Donate link:
 Tags: menu, shop, shortcode, ajax
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,8 +29,12 @@ Shop Menuは、商品/メニュー一覧を表示するプラグインです。�
 
 == Screenshots ==
 
+1. Menu
 
 == Changelog ==
+
+= 1.2.0 =
+* 商品ページを別ウィンドウで開く機能を追加しました
 
 = 1.1.0 =
 * 商品カテゴリを追加しました

@@ -2,7 +2,7 @@
 	<div id='shop-menu-list'>
 		<?php foreach($info->items as $item): ?>
 		<div class="shop-menu-item">
-			<a href="<?php echo $item->url; ?>">
+			<a href="<?php echo $item->url; ?>"<?php if ( $info->window_open ){ echo ' target="_blank"'; } ?>>
 			<?php echo $item->img_tag; ?>
 				<p class="shop-menu-name"><?php echo $item->title; ?></p>
 				 <?php if (!empty($info->show_price)): ?>
