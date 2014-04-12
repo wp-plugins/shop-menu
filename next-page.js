@@ -32,8 +32,9 @@ jQuery(document).ready(function($) {
 	function createHtml( data ){
 		var items = data.items
 		var html = '';
+		var target = data.window_open ? ' target="_blank" ' : "";
 		for ( var i = 0; i < items.length; i++){
-			html += '<div class="shop-menu-item"><a href="' + items[i].url + '">'
+			html += '<div class="shop-menu-item"><a href="' + items[i].url + '"' + target + '>'
 			+ items[i].img_tag + '<p class="shop-menu-name">' + items[i].title + '</p>';
 			if ( data.show_price ){
 				html += '<p class="shop-menu-price">' + items[i].price + '</p>';
