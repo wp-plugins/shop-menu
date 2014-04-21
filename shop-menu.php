@@ -3,7 +3,7 @@
  Plugin Name: Shop Menu
 Plugin URI: http://residentbird.main.jp/bizplugin/
 Description: 商品一覧、メニュー一覧を作成するプラグインです
-Version: 1.2.0
+Version: 1.3.0
 Author:WordPress Biz Plugin
 Author URI: http://residentbird.main.jp/bizplugin/
 */
@@ -16,7 +16,7 @@ new ShopMenu();
 
 
 class SM{
-	const VERSION = "1.2.0";
+	const VERSION = "1.3.0";
 	const SHORTCODE = "showshopmenu";
 	const SHORTCODE_PRICE = "showprice";
 	const OPTIONS = "shop_memu_options";
@@ -112,7 +112,9 @@ class ShopMenu{
 		$arr = array(
 				"sm_show_price" => true,
 				"sm_item_num" => 12,
-				"sm_monetary_unit" => "円（税込）"
+				"sm_item_orderby" => "名称順",
+				"sm_item_order" => "昇順",
+				"sm_monetary_unit" => "円（税込）",
 		);
 		SM::update_option( $arr );
 	}
@@ -264,8 +266,14 @@ class ShopMenuInfo{
 
 		$condition = array();
 		$condition['post_type'] = 'shop_menu';
-		$condition['orderby'] = 'post_date';
-		$condition['order'] = 'desc';
+		if ( empty( $options['sm_item_orderby'] ) || $options['sm_item_orderby'] == '名称順'){
+			$condition['orderby'] = 'title';
+		}else if( $options['sm_item_orderby'] == '更新日順' ){
+			$condition['orderby'] = 'modified';
+		}else{
+			$condition['orderby'] = 'post_date';
+		}
+		$condition['order'] = ( isset($options['sm_item_order'] ) && $options['sm_item_order'] == '昇順' ) ? 'asc' : 'desc';
 		$condition['numberposts'] = $item_num + 1;
 		$condition['offset'] = $page * $item_num;
 		if ( isset($category_id) ){
@@ -274,7 +282,6 @@ class ShopMenuInfo{
 				$condition['menu_type'] = $terms->slug;
 			}
 		}
-
 		$posts = get_posts( $condition );
 		if ( !is_array($posts) ){
 			return;
