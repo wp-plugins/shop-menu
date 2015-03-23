@@ -3,8 +3,8 @@ Contributors: WordPress BizPlugin
 Donate link:
 Tags: menu, shop, shortcode, ajax
 Requires at least: 3.5
-Tested up to: 3.9
-Stable tag: 1.3.0
+Tested up to: 4.1.1
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,9 @@ Shop Menuは、商品/メニュー一覧を表示するプラグインです。�
 1. Menu
 
 == Changelog ==
+
+= 1.4.0 =
+* 商品一覧のデザインを変更しました
 
 = 1.3.0 =
 * 商品一覧の表示順序を設定する機能を追加しました

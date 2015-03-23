@@ -3,8 +3,8 @@
  Plugin Name: Shop Menu
 Plugin URI: http://residentbird.main.jp/bizplugin/
 Description: 商品一覧、メニュー一覧を作成するプラグインです
-Version: 1.3.0
-Author:WordPress Biz Plugin
+Version: 1.4.0
+Author:Hideki Tanaka
 Author URI: http://residentbird.main.jp/bizplugin/
 */
 
@@ -12,11 +12,11 @@ if (!class_exists( 'WPAlchemy_MetaBox' ) ) {
 	include_once( dirname(__FILE__) . "/wpalchemy/MetaBox.php" );
 }
 include_once( dirname(__FILE__) . "/admin-ui.php" );
-new ShopMenu();
+$shopMenu = new ShopMenu();
 
 
 class SM{
-	const VERSION = "1.3.0";
+	const VERSION = "1.4.0";
 	const SHORTCODE = "showshopmenu";
 	const SHORTCODE_PRICE = "showprice";
 	const OPTIONS = "shop_memu_options";
@@ -172,11 +172,11 @@ class ShopMenu{
 	function add_shop_category_column($column_name, $post_id){
 		if( $column_name == 'shop_category' ){
 			$category = get_the_term_list($post_id, 'menu_type');
-		}
-		if ( isset($category) && $category ){
-			echo $category;
-		}else{
-			echo __('None');
+			if ( isset($category) && $category ){
+				echo $category;
+			}else{
+				echo __('None');
+			}
 		}
 	}
 
@@ -301,11 +301,13 @@ class ShopMenuItem{
 	var $title;
 	var $url;
 	var $price;
+	var $row_price;
 	var $img_tag;
 
 	public function __construct( $post, $post_meta ){
 		$this->title = esc_html( $post->post_title );
 		$this->url = get_permalink($post->ID);
+		$this->row_price = $post_meta['price'];
 		$this->price = $this->get_format_price( $post_meta['price']);
 		$this->img_tag = $this->get_thumbnail( $post->ID );
 	}
